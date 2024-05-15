@@ -1,0 +1,153 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.bg-img {
+    background-image: linear-gradient(117.67deg, rgb(27, 59, 102), rgb(0, 87, 255), rgb(202, 244, 247));
+}
+
+.message-container {
+    display: none;
+    transform: translateY(0%);
+    transition: transform 4s ease;
+}
+
+.message {
+    margin-bottom: 10px;
+}
+
+.message .sender {
+    font-weight: bold;
+}
+
+.message .time {
+    font-size: 0.8em;
+    color: #999;
+}
+
+.question {
+    color: white;
+    border-radius: 10px;
+    background: slategray;
+    color: white;
+    margin-top: 10px;
+    padding: 8px 12px;
+    max-width: 70%;
+    margin-left: auto;
+    text-align: left;
+    
+}
+
+.user {
+    color: white;
+    border-radius: 30px;
+    margin-top: 10px;
+    background: #027dff;
+    padding: 5px 12px;
+    max-width: 70%;
+    margin-left: auto;
+    font-size: 12px;
+    
+}
+
+.admin {
+    color: black;
+    border-radius: 30px;
+    margin-top: 10px;
+    background: #E0E0E0;
+    padding: 5px 12px;
+    max-width: 70%;
+    margin-right: auto;
+    font-size: 12px;
+    
+}
+
+.clicked-question {
+    color: white;
+    border-radius: 10px;
+    background: slategray;
+    color: white;
+    margin-top: 10px;
+    padding: 8px 12px;
+    max-width: 70%;
+    margin-left: auto;
+    text-align: left;
+    
+}
+
+.response {
+    color: black;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    margin-top: 10px;
+    background: #E0E0E0;
+    padding: 8px 12px;
+    max-width: 70%;
+    margin-right: auto;
+}
+
+.support {
+    color: gray;
+    border-radius: 5px;
+    margin-top: 10px;
+    background: seashell;
+    padding: 8px 12px;
+    margin-bottom: 20px;
+}
+
+.support-link {
+    color: blue;
+    text-decoration: underline blue;
+    cursor: pointer;
+}
+
+hr {
+    height: 2px;
+    width: 100%;
+    background-color: #999;
+    margin-top: 20px;
+}
+
+@keyframes dotAnimation {
+    0% { content: "."; }
+    25% { content: ". ."; }
+    50% { content: ". . ."; }
+    75% { content: ". ."; }
+    100% { content: "."; }
+}
+
+.loading-dots::after {
+    content: "...";
+    display: inline-block;
+    width: 90px;
+    text-align: left;
+    animation: dotAnimation 1s infinite steps(4);
+    color: black;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    margin-top: 10px;
+    background: #E0E0E0;
+    padding: 4px 12px;
+    max-width: 70%;
+    margin-right: auto;
+}
+
+.chat-session {
+    transition: transform 0.3s ease;
+    transform: translateY(100%);
+    overflow: hidden;
+}
+
+.hide-widget {
+    display: none;
+}
+
+.widget-container {
+    display: none;
+}
+
+.message-session {
+    display: none;
+}
