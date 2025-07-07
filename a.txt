@@ -1,0 +1,27 @@
+["Invoicing", "Bookkeeping", "Order-tracking"]
+
+if Invoicing is clicked by the user
+the chat will look like
+User: <button>Invoice</button> <button>Bookkeeping</button> <button>Order-tracking</button>
+response: response from http://localhost:8000/predict
+
+
+Invoice questions Array can have up to 10 questions and same goes to Bookkeeping and order-tracking
+[
+    "How does verzo helps with invoicing",
+    "I'm having isses sending invoice to my customers",
+    "how long does takes for my customers to get their invoice",
+    "How can I use my invoice ID",
+]
+
+so if invoicing is clicked, another 2 questions will be prompted from the invoice array sequence 
+
+the conversation will look like 
+
+User: <button>Invoice</button> <button>Bookkeeping</button> <button>Order-tracking</button>
+response: response from http://localhost:8000/predict
+user: two question from the sequence
+response: response from http://localhost:8000/predict
+user: two question from the sequence 
+response: response from http://localhost:8000/predict
+and on and on till the user is ask if he wants to speak to the rep 

@@ -1,294 +1,534 @@
-import "./output.css"
+import "./output.css";
 import { io } from "socket.io-client";
 
-const socket = io('https://reverb.siting.xyz');
+const socket = io("https://reverb.siting.xyz");
 
-document.addEventListener("DOMContentLoaded", function() {
-    const buttonContainer = document.getElementById("button-container");
-    const mainContainer = document.getElementById("main-container")
-    let lastClickedQuestion = null;
-    const messageDiv = document.querySelector('.message-container');
-    const firstMessageDiv = document.querySelector('.first-message');
-    const secondMessageDiv = document.querySelector('.second-message');
-    const showMessageButton = document.querySelector('.show');
-    const dontShowMessageButton = document.querySelector('.dont-show');
-    const backButton = document.querySelector('.back');
-    const showWidget = documment.querySelector(".show-widget");
-    const hideWidget = document.querySelector(".hide-widget")
-    const widgetContainer = document.querySelector(".widget-container")
-
-    
-
-    backButton.addEventListener('click', function() {
-        firstMessageDiv.style.display = 'block';
-        secondMessageDiv.style.display = 'none';
-    });
-
-    showMessageButton.addEventListener('click', function() {
-        messageDiv.style.display = 'block';
-        showMessageButton.style.display = 'none';
-        dontShowMessageButton.style.display = 'flex';
-    });
-
-    dontShowMessageButton.addEventListener('click', function() {
-        messageDiv.style.display = 'none';
-        showMessageButton.style.display = 'flex';
-        dontShowMessageButton.style.display = 'none';
-    });
-
-    showWidget.addEventListener("click", function () {
-        console.log("hello")
-        widgetContainer.style.display = "flex"
-        showWidget.style.display = "none"
-        hideWidget.style.display = "block"
-    })
-
-    // Function to handle button click
-    function handleButtonClick(event) {
-        const buttonText = event.target.textContent;
-        lastClickedQuestion = buttonText;
-        sendRequest(buttonText);
+function cssLoaded() {
+  for (let i = 0; i < document.styleSheets.length; i++) {
+    try {
+      // console.log(`Checking stylesheet ${i}: ${document.styleSheets[i].href}`);
+      if (
+        document.styleSheets[i].href &&
+        document.styleSheets[i].cssRules &&
+        document.styleSheets[i].cssRules.length === 0
+      ) {
+        return false;
+      }
+    } catch (e) {
+      if (e.name !== "SecurityError") throw e;
     }
+  }
+  // console.log("All CSS loaded.");
+  return true;
+}
 
-    // Function to make fetch request
-    function sendRequest(text) {
-        // Add loading message while waiting for response
-        const loadingDots = document.createElement("div");
-        loadingDots.className = "loading-dots";
-        buttonContainer.appendChild(loadingDots);
-        mainContainer.scrollTop = mainContainer.scrollHeight;
+const mainWidgetContainer = document.querySelector(".main-widget-container");
 
-        // Use setTimeout to delay the execution of the code inside
-        setTimeout(() => {
-            fetch("http://127.0.0.1:5000/predict", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ message: text })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Remove loading message
-                buttonContainer.removeChild(loadingDots);
+function showWidgetContainer() {
+  mainWidgetContainer.style.display = "block";
+}
 
-                // Add previous button
-                const newConversation = document.createElement("hr")
-                const previousButton = document.createElement("p");
-                previousButton.className = "clicked-question";
-                previousButton.textContent = lastClickedQuestion;
-                buttonContainer.appendChild(newConversation)
-                buttonContainer.appendChild(previousButton);
-
-                // Add response with styling
-                const responseDiv = document.createElement("div");
-                responseDiv.className = "response";
-                responseDiv.textContent = data.answer;
-                buttonContainer.appendChild(responseDiv);
-
-                // Add support message with link
-                const supportPara = document.createElement("p");
-                supportPara.className = "support"
-                supportPara.textContent = "If you are not okay with the response, talk to ";
-                const supportLink = document.createElement("span");
-                supportLink.className = "support-link"
-                supportLink.textContent = "support";
-                supportPara.appendChild(supportLink);
-                buttonContainer.appendChild(supportPara);
-                supportLink.addEventListener('click', function() {
-                    firstMessageDiv.style.display = 'none';
-                    secondMessageDiv.style.display = 'flex';
-                });
-
-                // Dynamically create new questions based on the last clicked question
-                createNewQuestions();
-                mainContainer.scrollTop = mainContainer.scrollHeight;
-            })
-            .catch(error => {
-                // Remove loading message if there's an error
-                buttonContainer.removeChild(loadingMessage);
-
-                // Handle errors
-                console.error("There was a problem with the fetch operation:", error);
-                buttonContainer.innerHTML = "Error fetching data.";
-            });
-        }, 100); // 30 seconds delay
+document.addEventListener("DOMContentLoaded", function () {
+  // console.log("DOM fully loaded and parsed.");
+  function checkCSS(developerKey) {
+    if (cssLoaded()) {
+      showWidgetContainer();
+      initializeWidget(developerKey);
+    } else {
+      setTimeout(() => checkCSS(developerKey), 100);
     }
+  }
 
-    // Function to create new questions
-    function createNewQuestions() {
-        // Add predefined new questions based on the last clicked question
-        const newQuestions = {
-            "Hello": ["How's your day?", "What brings you here?", "Nice to meet you!"],
-            "How are you doing": ["What have you been up to?", "Anything interesting happening?", "How's life treating you?"],
-            "How can we help you today": ["What can we assist you with?", "What brings you to us?", "How may we be of service?"],
-        };
-
-        // Add new buttons based on the last clicked question
-        if (lastClickedQuestion && newQuestions[lastClickedQuestion]) {
-            newQuestions[lastClickedQuestion].forEach(question => {
-                const button = document.createElement("button");
-                button.className = "question";
-                button.textContent = question;
-                buttonContainer.appendChild(button);
-                button.addEventListener("click", handleButtonClick); // Add event listener to new button
-            });
-        }
-    }
-
-    // Add event listeners to initial buttons
-    const buttons = document.querySelectorAll(".question");
-    buttons.forEach(button => {
-        button.addEventListener("click", handleButtonClick);
-    });
-
+  // // Listen for messages from the parent window
+  // window.addEventListener(
+  //   "message",
+  //   function (event) {
+  //     if (event.origin === "https://verzo.app") {
+  //       const message = event.data;
+  //       if (message && message.developerKey) {
+  //         checkCSS(message.developerKey);
+  //       }
+  //     }
+  //   },
+  //   false
+  // );
+  checkCSS("3738d7d0-ba8c-4ff8-a4da-ea0a9f1ea498");
 });
 
+function initializeWidget(developerKey) {
+  // console.log("Initializing widget with developer key:", developerKey);
+  const showWidget = document.querySelector(".show-widget");
+  const hideWidget = document.querySelector(".hide-widget");
+  const widgetContainer = document.querySelector(".widget-container");
+  const goToChat = document.querySelector(".go-to-chat");
+  const chatSession = document.querySelector(".message-session");
+  const goToWidgetContainer = document.querySelector(".back-to-container");
+  const messageDiv = document.querySelector(".message-container");
+  const apiKey = developerKey;
 
+  let primaryColor;
 
-// Function to display messages
+  const getPreferenceColor = async () => {
+    try {
+      const response = await fetch(
+        `https://reverb.siting.xyz/preference/${apiKey}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            // Include any other headers if needed
+          },
+          credentials: "include", // If you need to include cookies
+        }
+      );
+      // console.log("response", response);
+      if (response.ok) {
+        const data = await response.json();
+        primaryColor = data.backgroundColor;
+        console.log(primaryColor);
+        // handleColorPreference(primaryColor);
+      } else {
+        primaryColor = "blue";
+      }
+    } catch (error) {
+      // handleColorPreference(primaryColor);
+      // console.error("Error fetching preferences:", error);
+    }
+  };
 
-async function displayMessages() {
-    const chatMessages = document.getElementById('chat-messages');
-    chatMessages.innerHTML = '';
+  socket.on("messageCreated", () => {
+    displayMessages();
+  });
+
+  // const handleColorPreference = (primaryColor) => {
+  //   const widgetContainer = document.getElementById("widget-container");
+  //   const headings = document.querySelectorAll(".heading");
+  //   const lightTexts = document.querySelectorAll(".light-text");
+  //   const bgLights = document.querySelectorAll(".bg-light");
+  //   const messageSession = document.getElementById("message-session");
+  //   const bgHeavys = document.querySelectorAll(".bg-heavy");
+  //   const bgMedium = document.querySelectorAll(".bg-medium");
+  //   const textCustom = document.querySelectorAll(".text-custom");
+
+  //   // Function to add class to NodeList
+  //   const addClassToElements = (elements, className) => {
+  //     elements.forEach((element) => {
+  //       element.classList.add(className);
+  //     });
+  //   };
+
+  //   switch (primaryColor) {
+  //     case "black":
+  //       widgetContainer.classList.add("bg-slate-800");
+  //       addClassToElements(headings, "text-gray-700");
+  //       addClassToElements(lightTexts, "text-gray-600");
+  //       addClassToElements(bgLights, "bg-gray-200");
+  //       messageSession.classList.add("bg-slate-800");
+  //       addClassToElements(bgHeavys, "bg-black");
+  //       addClassToElements(bgMedium, "bg-custom-blue");
+  //       addClassToElements(textCustom, "text-custom-blue");
+  //       break;
+
+  //     case "gray":
+  //       widgetContainer.classList.add("bg-gray-700");
+  //       addClassToElements(headings, "text-gray-700");
+  //       addClassToElements(lightTexts, "text-gray-600");
+  //       addClassToElements(bgLights, "bg-gray-200");
+  //       messageSession.classList.add("bg-slate-800");
+  //       addClassToElements(bgHeavys, "bg-black");
+  //       addClassToElements(bgMedium, "bg-custom-blue");
+  //       addClassToElements(textCustom, "text-custom-blue");
+  //       break;
+
+  //     case "dark-gray":
+  //       widgetContainer.classList.add("custom-bg");
+  //       addClassToElements(headings, "text-gray-700");
+  //       addClassToElements(lightTexts, "text-gray-600");
+  //       addClassToElements(bgLights, "bg-gray-200");
+  //       messageSession.classList.add("bg-slate-800");
+  //       addClassToElements(bgHeavys, "bg-black");
+  //       addClassToElements(bgMedium, "bg-custom-blue");
+  //       addClassToElements(textCustom, "text-custom-blue");
+  //       break;
+
+  //     case "blue":
+  //       widgetContainer.classList.add("bg-blue-700");
+  //       addClassToElements(headings, "text-blue-700");
+  //       addClassToElements(lightTexts, "text-blue-500");
+  //       addClassToElements(bgLights, "bg-blue-100");
+  //       messageSession.classList.add("bg-blue-700");
+  //       addClassToElements(bgHeavys, "bg-blue-700");
+  //       break;
+
+  //     case "red":
+  //       widgetContainer.classList.add("bg-red-700");
+  //       addClassToElements(headings, "text-red-700");
+  //       addClassToElements(lightTexts, "text-red-500");
+  //       addClassToElements(bgLights, "bg-red-100");
+  //       messageSession.classList.add("bg-red-700");
+  //       addClassToElements(bgHeavys, "bg-red-700");
+  //       break;
+  //     default:
+  //       widgetContainer.classList.add("bg-blue-700");
+  //       addClassToElements(headings, "text-blue-700");
+  //       addClassToElements(lightTexts, "text-blue-500");
+  //       addClassToElements(bgLights, "bg-blue-100");
+  //       messageSession.classList.add("bg-blue-700");
+  //       addClassToElements(bgHeavys, "bg-blue-700");
+  //       break;
+  //   }
+  // };
+  const styleData = {
+    width: "500px", // Example Tailwind CSS width class
+    height: "85%", // Example Tailwind CSS height class
+  };
+
+  showWidget.addEventListener("click", function () {
+    messageDiv.style.display = "flex";
+    widgetContainer.style.display = "block";
+    showWidget.style.display = "none";
+    hideWidget.style.display = "flex";
+    window.parent.postMessage({ type: "applyStyle", styleData }, "*");
+  });
+
+  hideWidget.addEventListener("click", () => {
+    showWidget.style.display = "block";
+    hideWidget.style.display = "none";
+    widgetContainer.style.display = "none";
+    messageDiv.style.display = "none";
+    chatSession.style.display = "none";
+    window.parent.postMessage({ type: "clearStyle" }, "*");
+  });
+
+  goToChat.addEventListener("click", () => {
+    widgetContainer.style.display = "none";
+    chatSession.style.display = "flex";
+  });
+
+  goToWidgetContainer.addEventListener("click", () => {
+    widgetContainer.style.display = "block";
+    chatSession.style.display = "none";
+  });
+
+  let typing = false;
+  let userTypingTimeout = null;
+  let otherUserTypingTimeout = null;
+  let timer = null;
+  let typingInterval = null;
+  let sessionId = localStorage.getItem("sessionId");
+  let conversationId = localStorage.getItem("conversationId");
+  const messageInput = document.getElementById("message-input");
+  const senderType = "user";
+
+  function handleTyping() {
+    if (socket && conversationId) {
+      // console.log(senderType);
+      socket.emit("typing", { conversationId, senderType });
+    }
+  }
+
+  messageInput.addEventListener("input", (e) => {
+    // console.log("tying is on by user");
+    handleTyping();
+  });
+
+  // Function to handle incoming typing events
+  let adminTyping = false;
+
+  if (conversationId) {
+    socket.on(`userTyping:${conversationId}`, (data) => {
+      // console.log("data: ", data);
+      if (data.senderType !== senderType) {
+        adminTyping = true;
+        // console.log("other user is typing");
+        getTyping();
+        if (otherUserTypingTimeout) {
+          clearTimeout(otherUserTypingTimeout);
+        }
+        otherUserTypingTimeout = setTimeout(() => {
+          adminTyping = false;
+          //console.log("other user stopped typing");
+          //console.log("Admin typing", adminTyping);
+        }, 8000); // Hide notification after 1 second of inactivity
+      }
+    });
+  }
+
+  // Clean up event listener when necessary
+  // window.addEventListener("beforeunload", () => {
+  //   if (conversationId) {
+  //     socket.off(`userTyping:${conversationId}`, (data) => {
+  //       console.log("data: ", data);
+  //       if (data.senderType !== senderType) {
+  //         adminTyping = true;
+  //         if (otherUserTypingTimeout) {
+  //           clearTimeout(otherUserTypingTimeout);
+  //         }
+  //         otherUserTypingTimeout = setTimeout(() => {
+  //           adminTyping = false;
+  //           console.log("other user stopped typing");
+  //         }, 1000); // Hide notification after 1 second of inactivity
+  //       }
+  //     });
+  //   }
+  //   if (userTypingTimeout) {
+  //     clearTimeout(userTypingTimeout);
+  //   }
+  //   if (otherUserTypingTimeout) {
+  //     clearTimeout(otherUserTypingTimeout);
+  //   }
+  // });
+  const chatMessages = document.getElementById("chat-messages");
+
+  async function displayMessages() {
+    const chatMessages = document.getElementById("chat-messages");
+
+    chatMessages.innerHTML = "";
 
     let conversationId = localStorage.getItem("conversationId");
     if (!conversationId) {
-        console.error("No conversation ID found.");
-        return;
+      // console.error("No conversation ID found.");
+      return;
     }
 
     const apiUrl = `https://reverb.siting.xyz/conversation/messages/${conversationId}`;
 
     try {
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-            throw new Error('Network response was not ok.');
+      const response = await fetch(apiUrl);
+      if (!response.ok) {
+        throw new Error("Network response was not ok.");
+      }
+      const messages = await response.json();
+      // console.log(`Messages:${when} `, messages);
+      const reverseMessage = messages.reverse();
+
+      reverseMessage.forEach((msg) => {
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("message");
+
+        // Add CSS class based on senderType
+        if (msg.senderType === "user") {
+          messageDiv.classList.add("user");
+          if (primaryColor === "black") {
+            messageDiv.classList.add("bg-black");
+          } else if (primaryColor === "blue") {
+            messageDiv.classList.add("bg-blue-500");
+          } else {
+            messageDiv.classList.add("bg-blue-500");
+          }
+        } else if (msg.senderType === "admin") {
+          messageDiv.classList.add("admin");
         }
-        const messages = await response.json();
-        const reverseMessage = messages.reverse()
-        reverseMessage.forEach(msg => {
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message');
-            
-            // Add CSS class based on senderType
-            if (msg.senderType === 'user') {
-                messageDiv.classList.add('user');
-            } else if (msg.senderType === 'admin') {
-                messageDiv.classList.add('admin');
-            }
-            
-            messageDiv.innerHTML = `
-                <div class="sender">${msg.content} </div>
+
+        messageDiv.innerHTML = `
+              ${msg.content}
             `;
-            chatMessages.appendChild(messageDiv);
-        });
+        chatMessages.appendChild(messageDiv);
+      });
 
-        chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to bottom
+      chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to bottom
     } catch (error) {
-        console.error("Error:", error);
+      console.error("Error:", error);
     }
-}
+  }
+  const getTyping = () => {
+    const typingClassName = "typing-indicator";
 
+    if (adminTyping) {
+      // console.log("adminTyping: ", adminTyping);
 
-// Listen for 'messageCreated' event emitted by the server via Socket.IO
-socket.on('messageCreated', () => {
-    // When a new message is created, call the function to fetch and display updated messages
-    displayMessages();
-});
-// function sendMessage() {
-//     const messageInput = document.getElementById('message-input');
-//     const message = messageInput.value.trim();
-//     if (message !== '') {
-//         const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-//         messages.push({ sender: 'User', message, time });
-//         displayMessages();
-//         messageInput.value = ''; // Clear input field
-//         // Simulated response from admin after 1 second
-//         setTimeout(() => {
-//             const adminMessage = 'Sorry, I am just a simulation.';
-//             const adminTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-//             messages.push({ sender: 'Admin', message: adminMessage, time: adminTime });
-//             displayMessages();
-//         }, 1000);
-//     }
-// }
+      // Check if there's already a typing indicator
+      let typingIndicator = chatMessages.querySelector(`.${typingClassName}`);
 
-function generateSessionId() {
-    return Math.random().toString(36).substr(2, 9); // Generate a random alphanumeric string
-}
-
-// Function to send message to the backend
-async function sendMessage() {
-    const messageInput = document.getElementById("message-input");
-    const message = messageInput.value.trim();
-    let sessionId = localStorage.getItem("sessionId");
-    let conversationId = localStorage.getItem("conversationId");
-    console.log("Hello");
-
-    if (!sessionId) {
-        // If sessionId is not set in local storage, generate a new one
-        const apiUrl = 'https://reverb.siting.xyz/conversation/request';
-        sessionId = generateSessionId();
-        localStorage.setItem("sessionId", sessionId);
-        console.log(apiUrl, sessionId, message);
-    
-        try {
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ uniqueId: sessionId, messageContent: message })
-            });
-            if (!response.ok) {
-                throw new Error('Network response was not ok.');
-            }
-            const data = await response.json();
-            conversationId = data.id;
-            localStorage.setItem("conversationId", conversationId);
-        } catch (error) {
-            console.error("Error:", error);
-        } finally {
-            messageInput.value = "";
-            displayMessages() // Clear input field
-        }
+      if (!typingIndicator) {
+        // Create the typing indicator if it doesn't exist
+        typingIndicator = document.createElement("div");
+        typingIndicator.className = typingClassName;
+        typingIndicator.innerHTML = `
+            <div class=" relative bg-gray-200 typing mb-4 h-6 w-12 flex items-center justify-center">
+              <div class="typing__dot bg-black"></div>
+              <div class="typing__dot bg-black"></div>
+              <div class="typing__dot bg-black"></div>
+            </div>
+           `;
+        chatMessages.appendChild(typingIndicator);
+      }
     } else {
-        const apiUrl = `https://reverb.siting.xyz/conversation/${conversationId}/continue`;
-        console.log(conversationId);
-        try {
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ senderType: "user", messageContent: message })
-            });
-            if (!response.ok) {
-                throw new Error('Network response was not ok.');
-            }
-        } catch (error) {
-            console.error("Error:", error);
-        } finally {
-            messageInput.value = ""; // Clear input field
+      // Remove the typing indicator if adminTyping is false
+      let typingIndicator = chatMessages.querySelector(`.${typingClassName}`);
+      if (typingIndicator) {
+        chatMessages.removeChild(typingIndicator);
+      }
+    }
+  };
+
+  // Listen for 'messageCreated' event emitted by the server via Socket.IO
+
+  function generateSessionId() {
+    return Math.random().toString(36).substr(2, 9); // Generate a random alphanumeric string
+  }
+
+  // Function to send message to the backend
+  async function sendMessage() {
+    const message = messageInput.value.trim();
+    // Check if the message is empty
+    if (!message) {
+      return; // Exit the function early
+    }
+    if (!sessionId) {
+      // If sessionId is not set in local storage, generate a new one
+      const apiUrl = "https://reverb.siting.xyz/conversation/request";
+      sessionId = generateSessionId();
+      localStorage.setItem("sessionId", sessionId);
+      // console.log(apiUrl, sessionId, message);
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            uniqueId: sessionId,
+            messageContent: message,
+          }),
+        });
+        if (!response.ok) {
+          throw new Error("Network response was not ok.");
         }
+        const data = await response.json();
+        conversationId = data.conversationId;
+        localStorage.setItem("conversationId", conversationId);
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        messageInput.value = "";
+      }
+    } else {
+      const apiUrl = `https://reverb.siting.xyz/conversation/${conversationId}/continue`;
+      //console.log(conversationId);
+      try {
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ senderType: "user", messageContent: message }),
+        });
+        if (!response.ok) {
+          throw new Error("Network response was not ok.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        typing = false;
+        messageInput.value = ""; // Clear input field
+      }
     }
+  }
+
+  async function fetchAndDisplayArticles() {
+    try {
+      // Step 1: Fetch the data from the API
+      const response = await fetch(
+        `https://reverb.siting.xyz/article/${apiKey}`
+      ); // Replace with your actual API endpoint
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      // console.log("data: ", data);
+
+      // Access the actual articles array from response.data
+      const articles = data; // Assuming the articles are inside `data` property
+
+      // Step 2: Create a list of anchor tags
+      const articleLinksDiv = document.getElementById("article-links");
+      articleLinksDiv.innerHTML = ""; // Clear existing content if any
+
+      articles.forEach((article) => {
+        // Create the anchor element
+        const anchor = document.createElement("a");
+        anchor.href = article.link;
+        const textSpan = document.createElement("span");
+        if (primaryColor === "black") {
+          // console.log("pri", primaryColor);
+          anchor.className =
+            "p-1 flex text-[15px] font-light items-center justify-between hover:rounded-md gap-x-2 cursor-pointer text-gray-600";
+          textSpan.className = "text-gray-600";
+        } else if (primaryColor === "blue") {
+          anchor.className =
+            "p-1 flex text-[15px] font-light items-center justify-between hover:rounded-md gap-x-2 cursor-pointer text-blue-500";
+          textSpan.className = "text-blue-500";
+        } else {
+          anchor.className =
+            "p-1 flex text-[15px] font-light items-center justify-between hover:rounded-md gap-x-2 cursor-pointer text-blue-500";
+          textSpan.className = "text-blue-500";
+        }
+        anchor.target = "_blank"; // Open link in a new tab
+
+        // Create the span for the text
+
+        textSpan.textContent = article.header;
+
+        // Create the span for the SVG
+        const svgSpan = document.createElement("span");
+
+        // Create the SVG element
+        const svg = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "svg"
+        );
+        svg.setAttribute("class", "w-5 h-5 light-text");
+        svg.setAttribute("aria-hidden", "true");
+        svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        svg.setAttribute("width", "24");
+        svg.setAttribute("height", "24");
+        svg.setAttribute("fill", "none");
+        svg.setAttribute("viewBox", "0 0 24 24");
+
+        // Create the path element
+        const path = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "path"
+        );
+        path.setAttribute("stroke", "currentColor");
+        path.setAttribute("stroke-linecap", "round");
+        path.setAttribute("stroke-linejoin", "round");
+        path.setAttribute("stroke-width", "2");
+        path.setAttribute("d", "M19 12H5m14 0-4 4m4-4-4-4");
+
+        // Append the path to the SVG
+        svg.appendChild(path);
+
+        // Append the SVG to the svgSpan
+        svgSpan.appendChild(svg);
+
+        // Append the text span and svg span to the anchor
+        anchor.appendChild(textSpan);
+        anchor.appendChild(svgSpan);
+
+        // Append the anchor to the div
+        articleLinksDiv.appendChild(anchor);
+      });
+    } catch (error) {
+      console.error("Error fetching articles:", error);
+    }
+  }
+  getPreferenceColor();
+  const init = async () => {
+    await fetchAndDisplayArticles();
+    await displayMessages();
+  };
+
+  init();
+  const sendMessageBtn = document.querySelector("#send-message-btn");
+  sendMessageBtn.addEventListener("click", sendMessage);
+
+  messageInput.addEventListener("keydown", function (event) {
+    if (event.key === "Enter" && !event.shiftKey) {
+      sendMessage();
+      event.preventDefault();
+    }
+  });
 }
-
-document.getElementById("send-message-btn").addEventListener("click", sendMessage)
-
-// Event listener for Enter key press
-document.getElementById('message-input').addEventListener('keydown', function(event) {
-    if (event.key === 'Enter' && !event.shiftKey) {
-        sendMessage();
-        event.preventDefault(); // Prevents adding newline in the input field
-    }
-});
-
-// Initial display of messages
-displayMessages();

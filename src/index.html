@@ -2,221 +2,379 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=1200" />
     <title>Message App</title>
     <link rel="stylesheet" href="./output.css" />
+    <link rel="preload" href="./output.css" as="style" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
   </head>
+
   <body>
-    <div class="bg-white h-screen flex flex-col items-end justify-end">
-      <div class="message-container">
+    <div class="fixed bottom-0 right-0 w-full md:w-[420px] z-50">
+      <div
+        class="md:max-h-[90vh] mt-4 md:mt-0 overflow-y-auto w-full z-2000 justify-end flex-col main-widget-container"
+      >
         <div
-          class="flex-1 mt-10 mr-4 w-96 bg-white shadow-xl rounded-lg relative first-message hidden"
+          class="message-container shadow-2xl rounded-xl w-full relative mr-6 overflow-y-auto"
         >
-          <div class="bg-img h-64 rounded-t-lg absolute w-full z-0"></div>
           <div
-            class="flex flex-col overflow-y-auto h-full p-4"
-            id="main-container"
+            class="w-full font-sans overflow-y-auto widget-container"
+            id="widget-container"
           >
-            <div class="flex flex-col z-10 ml-4 text-white">
-              <svg
-                class="w-10 h-10 mb-3 -ml-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"
-                ></path>
-              </svg>
-              <div class="text-3xl mb-2">Hi there 👋</div>
-              <div class="w-60 text-gray-200 text-sm mb-1">
-                We make it easy to connect with us. Feel free to ask us anything
-                or share your feedback.
-              </div>
-            </div>
             <div
-              class="border-0 border-t-4 mt-24 border-blue-500 rounded z-10 shadow-md text-sm"
+              class="p-4 bg-gradient-to-r cursor-default from-blue-500 to-blue-700 text-white rounded-t-xl w-full"
             >
-              <div
-                class="bg-white border border-t-0 rounded-t-none rounded-b flex flex-col space-y-2"
-              >
-                <div class="px-6 py-4 flex flex-col items-start gap-3">
-                  <div class="font-semibold">Start a conversation</div>
-                  <div class="flex flex-row gap-3">
-                    <div class="flex flex-row -space-x-10">
-                      <img
-                        class="w-16 h-16 rounded-full border-2 border-white"
-                        src="https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=facearea&w=256&h=256&facepad=2"
-                      />
-                      <img
-                        class="w-16 h-16 rounded-full border-2 border-white"
-                        src="https://images.unsplash.com/flagged/photo-1570612861542-284f4c12e75f?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=facearea&w=256&h=256&facepad=2"
-                      />
-                      <img
-                        class="w-16 h-16 rounded-full border-2 border-white"
-                        src="https://images.unsplash.com/photo-1499952127939-9bbf5af6c51c?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=facearea&w=256&h=256&facepad=2"
-                      />
-                    </div>
-                    <div class="flex flex-col justify-center">
-                      <div class="text-gray-400">Our usual reply time</div>
-                      <div
-                        class="flex flex-row items-center gap-1 font-semibold"
-                      >
-                        <svg
-                          class="w-4 h-4 text-blue-700"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                          ></path>
-                        </svg>
-                        A few minutes
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div
-              class="border-0 mt-2 border-t-4 min-h-20 border-blue-500 rounded z-10 shadow-md"
-            >
-              <div
-                class="bg-white border-t-0 rounded-t-none rounded-b p-6 flex flex-col space-y-2"
-              >
-                <div
-                  class="flex flex-col gap-y-2 items-start"
-                  id="button-container"
+              <div class="hide-widget-mobile justify-end hidden md:hidden">
+                <svg
+                  class="w-7 h-7 text-white cursor-pointer"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  viewBox="0 0 24 24"
                 >
-                  <button class="question">Hello</button>
-                  <button class="question">How are you doing</button>
-                  <button class="question">How can we help you today</button>
-                </div>
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18 17.94 6M18 18 6.06 6"
+                  />
+                </svg>
               </div>
+              <h2 class="text-lg text-center">Chat with us</h2>
+              <div class="w-full flex items-center justify-center mt-4">
+                <span>
+                  <svg
+                    height="50px"
+                    width="50px"
+                    version="1.1"
+                    id="Layer_1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    viewBox="0 0 508 508"
+                    xmlSpace="preserve"
+                    fill="#000000"
+                  >
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g
+                      id="SVGRepo_tracerCarrier"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      {" "}
+                      <circle
+                        class="fill-[#7b9ba7]"
+                        cx="254"
+                        cy="254"
+                        r="254"
+                      ></circle>
+                      {" "}
+                      <path
+                        class="fill-[#FFFFFF]"
+                        d="M303.7,303.3c30.5-17.3,51-50.1,51-87.6c0-55.7-45.1-100.8-100.8-100.8S153.2,160,153.2,215.6 c0,37.6,20.6,70.3,51,87.6C141,319.3,89.7,365,66,424.8c46.5,51.1,113.5,83.2,188,83.2s141.5-32.1,188-83.2 C418.3,365,367,319.3,303.7,303.3z"
+                      ></path>
+                      {" "}
+                      <path
+                        class="fill-[#324A5E]"
+                        d="M401.6,182.3h-15.8C370.9,123.4,317.5,79.6,254,79.6s-116.9,43.7-131.8,102.7h-15.8 c-5.4,0-9.8,4.4-9.8,9.8V240c0,5.4,4.4,9.8,9.8,9.8h20c6.1,0,10.8-5.5,9.7-11.4c-2-10.4-2.7-21.3-1.8-32.5 c4.8-59.3,53.6-106.9,113.1-110.1c69.2-3.8,126.8,51.5,126.8,119.9c0,7.8-0.8,15.3-2.2,22.7c-1.2,6,3.6,11.5,9.6,11.5h1.8 c-4.2,13-14.9,37.2-38.3,50.2c-19.6,10.9-44.3,11.9-73.4,2.8c-1.5-6.7-8.9-14.6-16.5-18.3c-9.8-4.9-15.9-0.8-19.4,6.2 s-3,14.3,6.7,19.2c8.6,4.3,21.6,5.2,27,0.5c13.9,4.3,26.9,6.5,39,6.5c15,0,28.5-3.3,40.4-10c27.5-15.3,38.8-43.7,42.8-57.2h9.9 c5.4,0,9.8-4.4,9.8-9.8v-47.9C411.4,186.7,407,182.3,401.6,182.3z"
+                      ></path>
+                      {" "}
+                    </g>
+                  </svg>
+                </span>
+              </div>
+              <div class="flex items-center my-2 justify-center">
+                <span
+                  class="border-b border-opacity-50 border-b-white pb-2.5 text-[14px] text-center md:text-left"
+                >
+                  We usually reply in a few minutes at this time of the day
+                </span>
+              </div>
+              <div class="flex gap-x-5 mt-4 justify-center items-center">
+                <a
+                  href="https://www.facebook.com/verzoapp?mibextid=ZbWKwL"
+                  class="text-white hover:text-gray-300"
+                  target="_blank"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M22.676 0H1.326C.594 0 0 .594 0 1.326v21.348C0 23.406.594 24 1.326 24H12.82V14.706h-3.2v-3.6h3.2v-2.648c0-3.157 1.927-4.876 4.738-4.876 1.344 0 2.5.1 2.835.144v3.285l-1.945.001c-1.525 0-1.822.725-1.822 1.789v2.305h3.644l-.477 3.6h-3.167V24h6.214C23.406 24 24 23.406 24 22.674V1.326C24 .594 23.406 0 22.676 0z"
+                    />
+                  </svg>
+                </a>
+                <a
+                  href="https://x.com/VerzoApp?t=b47j4-P7lSJ3FOEuwSp66w&s=08"
+                  class="text-white hover:text-gray-300"
+                  target="_blank"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M24 4.557a9.93 9.93 0 01-2.828.775 4.941 4.941 0 002.165-2.724 9.865 9.865 0 01-3.127 1.195 4.924 4.924 0 00-8.388 4.482A13.978 13.978 0 011.671 3.149a4.922 4.922 0 001.523 6.573 4.897 4.897 0 01-2.231-.616c-.054 2.282 1.581 4.415 3.949 4.89a4.935 4.935 0 01-2.224.085 4.929 4.929 0 004.604 3.417 9.869 9.869 0 01-6.102 2.104c-.397 0-.79-.023-1.175-.068a13.963 13.963 0 007.557 2.211c9.054 0 14.004-7.503 14.004-14.004 0-.213-.005-.426-.015-.637A10.025 10.025 0 0024 4.557z"
+                    />
+                  </svg>
+                </a>
+                <a
+                  href="https://www.linkedin.com/company/verzo-app/"
+                  class="text-white hover:text-gray-300"
+                  target="_blank"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 448 512"
+                    class="text-white w-5 h-5"
+                    fill="white"
+                  >
+                    <path
+                      d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.8 0 54.1S24.09 0 53.79 0 107.5 24.09 107.5 53.8 83.5 108.1 53.79 108.1zm394.21 339.9h-92.7V302.4c0-34.8-12.4-58.5-43.3-58.5-23.6 0-37.6 15.9-43.8 31.3-2.3 5.5-2.8 13.1-2.8 20.8v151.1h-92.7V148.9h92.7v40.8c12.3-19 34.4-46.1 83.6-46.1 61 0 106.8 39.9 106.8 125.6v179.8z"
+                    />
+                  </svg>
+                </a>
+                <a
+                  href="mailto:info@verzo.app"
+                  class="text-white hover:text-gray-300"
+                  target="_blank"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512 512"
+                    class="text-white w-[22px] h-[22px]"
+                    fill="white"
+                  >
+                    <path
+                      d="M464 80H48c-26.51 0-48 21.49-48 48v256c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V128c0-26.51-21.49-48-48-48zm-6.2 38.41L258.31 273.48a12 12 0 01-13.54 0L54.2 118.41A12 12 0 0164.21 96h383.58a12 12 0 0110.01 22.41z"
+                    />
+                  </svg>
+                </a>
+              </div>
+            </div>
+            <div
+              class="bg-gray-50 cursor-default max-h-[50vh] min-h-[30vh] overflow-y-scroll flex flex-col justify-between"
+            >
+              <ul class="w-full text-[15px] px-4 text-gray-500 mt-2">
+                <p
+                  class="font-medium text-base py-3 underline underline-offset-2"
+                >
+                  Popular Articles
+                </p>
+                <div class="flex flex-col gap-y-2" id="article-links"></div>
+              </ul>
+              <p class="text-gray-500 text-[13px] text-center py-2">
+                Powered by
+                <span class="text-primary-blue">Reverb</span>
+              </p>
+            </div>
+            <div
+              class="flex items-center cursor-default justify-center mt-auto border-t py-3 bg-white rounded-b-xl"
+            >
+              <button
+                class="px-4 py-1.5 text-[15px] bg-gradient-to-r from-blue-500 to-blue-600 rounded-full text-white hover:bg-blue-600 transition-colors go-to-chat"
+              >
+                Send a message
+              </button>
             </div>
           </div>
-        </div>
-        <div
-          class="flex-col mt-10 mr-4 w-96 bg-white shadow-xl rounded-lg relative overflow-hidden second-message"
-        >
-          <div class="bg-blue-600 text-white rounded-t-lg w-full z-0 py-4 px-6">
-            <button class="back">
-              <svg
-                class="w-8 h-8"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
-            </button>
-            <div class="flex flex-col items-center gap-y-3">
-              <h4 class="text-center font-bold tracking-[0.5px]">Intercom</h4>
-              <div class="flex flex-row -space-x-2">
-                <img
-                  class="w-16 h-16 rounded-full border-2 border-white"
-                  src="https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=facearea&w=256&h=256&facepad=2"
-                />
-                <img
-                  class="w-16 h-16 rounded-full border-2 border-white"
-                  src="https://images.unsplash.com/flagged/photo-1570612861542-284f4c12e75f?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=facearea&w=256&h=256&facepad=2"
-                />
-                <img
-                  class="w-16 h-16 rounded-full border-2 border-white"
-                  src="https://images.unsplash.com/photo-1499952127939-9bbf5af6c51c?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=facearea&w=256&h=256&facepad=2"
-                />
+          <div class="flex flex-col cursor-default w-full message-session">
+            <div
+              class="p-4 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-t-xl"
+            >
+              <span class="back-to-container absolute cursor-pointer mt-3">
+                <svg
+                  class="w-6 h-6 text-white"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="m15 19-7-7 7-7"
+                  />
+                </svg>
+              </span>
+              <div class="flex items-center ml-10 gap-x-5">
+                <span>
+                  <svg
+                    height="50px"
+                    width="50px"
+                    version="1.1"
+                    id="Layer_1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    viewBox="0 0 508 508"
+                    xmlSpace="preserve"
+                    fill="#000000"
+                  >
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g
+                      id="SVGRepo_tracerCarrier"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      {" "}
+                      <circle
+                        class="fill-[#7b9ba7]"
+                        cx="254"
+                        cy="254"
+                        r="254"
+                      ></circle>
+                      {" "}
+                      <path
+                        class="fill-[#FFFFFF]"
+                        d="M303.7,303.3c30.5-17.3,51-50.1,51-87.6c0-55.7-45.1-100.8-100.8-100.8S153.2,160,153.2,215.6 c0,37.6,20.6,70.3,51,87.6C141,319.3,89.7,365,66,424.8c46.5,51.1,113.5,83.2,188,83.2s141.5-32.1,188-83.2 C418.3,365,367,319.3,303.7,303.3z"
+                      ></path>
+                      {" "}
+                      <path
+                        class="fill-[#324A5E]"
+                        d="M401.6,182.3h-15.8C370.9,123.4,317.5,79.6,254,79.6s-116.9,43.7-131.8,102.7h-15.8 c-5.4,0-9.8,4.4-9.8,9.8V240c0,5.4,4.4,9.8,9.8,9.8h20c6.1,0,10.8-5.5,9.7-11.4c-2-10.4-2.7-21.3-1.8-32.5 c4.8-59.3,53.6-106.9,113.1-110.1c69.2-3.8,126.8,51.5,126.8,119.9c0,7.8-0.8,15.3-2.2,22.7c-1.2,6,3.6,11.5,9.6,11.5h1.8 c-4.2,13-14.9,37.2-38.3,50.2c-19.6,10.9-44.3,11.9-73.4,2.8c-1.5-6.7-8.9-14.6-16.5-18.3c-9.8-4.9-15.9-0.8-19.4,6.2 s-3,14.3,6.7,19.2c8.6,4.3,21.6,5.2,27,0.5c13.9,4.3,26.9,6.5,39,6.5c15,0,28.5-3.3,40.4-10c27.5-15.3,38.8-43.7,42.8-57.2h9.9 c5.4,0,9.8-4.4,9.8-9.8v-47.9C411.4,186.7,407,182.3,401.6,182.3z"
+                      ></path>
+                      {" "}
+                    </g>
+                  </svg>
+                </span>
+                <div class="flex flex-col text-start">
+                  <h2 class="text-xs">Chat with</h2>
+                  <h2
+                    class="text-sm md:text-[17px] font-medium flex items-center gap-x-1"
+                  >
+                    Verzo support
+                    <svg
+                      class="w-2.5 h-2.5 rounded-full bg-green-500"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <circle cx="10" cy="10" r="5" />
+                    </svg>
+                  </h2>
+                </div>
               </div>
-              <div class="flex flex-col text-center gap-y-2">
-                <h6 class="font-medium">We typically reply within a day</h6>
-                <p class="text-gray-400">
-                  We help your business grow by connecting you to your
-                  customers.
+            </div>
+            <div class="rounded-b-xl bg-gray-100">
+              <div class="h-[350px] flex flex-col justify-end">
+                <div class="overflow-y-auto all-messages">
+                  <div id="messages" class="flex flex-col px-5"></div>
+                  <div class="flex flex-col px-5" id="chat-messages"></div>
+                </div>
+              </div>
+              <div class="bg-white flex flex-col rounded-b-xl relative mt-4">
+                <button
+                  class="text-center text-xs pt-2 text-blue-500 hidden"
+                  id="end-session"
+                >
+                  End session and restart chat
+                </button>
+                <input
+                  class="pl-5 pr-4 pt-5 text-[14px] focus:outline-none text-gray-800"
+                  type="text"
+                  name="chat"
+                  id="message-input"
+                  autofocus
+                  placeholder="Type here and press enter...."
+                />
+                <div
+                  class="absolute flex right-4 top-[28%] gap-x-2.5 text-gray-400 transform -translate-y-1/2"
+                  id="send-message-btn"
+                >
+                  <GoSmiley class="w-[17px] h-[17px] mt-[1px]" />
+                  <IoIosSettings class="w-[19px] h-[19px]" />
+                </div>
+                <p class="text-gray-500 text-[13px] text-center pt-5 pb-4">
+                  Powered by
+                  <span class="text-primary-blue">Reverb</span>
                 </p>
               </div>
             </div>
           </div>
-          <div
-            class="px-4 flex flex-col h-48 overflow-y-auto relative"
-            id="chat-messages"
-          ></div>
-          <div
-            class="w-full flex flex-row border-t h-14 border-gray-200 bottom-0 z-10"
-          >
-            <input
-              type="text"
-              id="message-input"
-              placeholder="send your messages ..."
-              class="border-0 flex-1 px-4 py-2 text-sm outline-none bg-white"
-            />
-            <button type="button" id="send-message-btn" class="p-2">
+        </div>
+        <div class="">
+          <div class="hide-widget justify-end hidden">
+            <div
+              class="rounded-full w-16 h-16 mt-4 flex items-center justify-center cursor-pointer shadow-xl bg-blue-500"
+            >
               <svg
-                class="w-5 h-5 text-blue-700"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+                class="w-6 h-6 text-white"
+                aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
               >
                 <path
+                  stroke="currentColor"
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M9 5l7 7-7 7"
-                ></path>
+                  d="M6 18 17.94 6M18 18 6.06 6"
+                />
               </svg>
-            </button>
+            </div>
+          </div>
+          <div class="show-widget justify-end flex">
+            <div
+              class="px-3 w-30 h-10 md:w-40 md:h-12 flex items-center justify-center gap-x-2 text-white rounded-full cursor-pointer hover:shadow-2xl bg-blue-500"
+            >
+              <svg
+                height="25px"
+                width="25px"
+                version="1.1"
+                id="Capa_1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                viewBox="0 0 58 58"
+                xml:space="preserve"
+                fill="#000000"
+              >
+                <g id="SVGRepo_bgCarrier" stroke-width="0" />
+
+                <g
+                  id="SVGRepo_tracerCarrier"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+
+                <g id="SVGRepo_iconCarrier">
+                  <g>
+                    <path
+                      style="fill: #fff"
+                      d="M29,1.5c-16.016,0-29,11.641-29,26c0,5.292,1.768,10.211,4.796,14.318 C4.398,46.563,3.254,53.246,0,56.5c0,0,9.943-1.395,16.677-5.462c0.007,0.003,0.015,0.006,0.022,0.009 c2.764-1.801,5.532-3.656,6.105-4.126c0.3-0.421,0.879-0.548,1.33-0.277c0.296,0.178,0.483,0.503,0.489,0.848 c0.01,0.622-0.005,0.784-5.585,4.421C22.146,52.933,25.498,53.5,29,53.5c16.016,0,29-11.641,29-26S45.016,1.5,29,1.5z"
+                    />
+                    <circle style="fill: #027dff" cx="15" cy="27.5" r="3" />
+                    <circle style="fill: #027dff" cx="29" cy="27.5" r="3" />
+                    <circle style="fill: #027dff" cx="43" cy="27.5" r="3" />
+                  </g>
+                </g>
+              </svg>
+              <p class="text-base text-gray-100 font-medium">Chat with us</p>
+            </div>
           </div>
         </div>
       </div>
-      <div class="">
-        <div
-          class="bg-blue-600 rounded-full w-16 h-16 m-4 flex items-center justify-center cursor-pointer shadow-xl show"
-        >
-          <svg
-            class="w-6 h-6 text-white"
-            viewBox="0 0 36 29"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M28.2857 10.5714C28.2857 4.88616 21.9576 0.285714 14.1429 0.285714C6.32813 0.285714 0 4.88616 0 10.5714C0 13.8259 2.08929 16.7388 5.34375 18.6272C4.66071 20.2946 3.77679 21.0781 2.9933 21.9621C2.77232 22.2232 2.51116 22.4643 2.59152 22.846C2.65179 23.1875 2.93304 23.4286 3.23438 23.4286C3.25446 23.4286 3.27455 23.4286 3.29464 23.4286C3.89732 23.3482 4.47991 23.2478 5.02232 23.1071C7.05134 22.5848 8.93973 21.721 10.6071 20.5357C11.7321 20.7366 12.9174 20.8571 14.1429 20.8571C21.9576 20.8571 28.2857 16.2567 28.2857 10.5714ZM36 15.7143C36 12.3594 33.7902 9.38616 30.3951 7.51786C30.6964 8.50223 30.8571 9.52679 30.8571 10.5714C30.8571 14.1674 29.0089 17.4821 25.654 19.933C22.5402 22.183 18.4621 23.4286 14.1429 23.4286C13.5603 23.4286 12.9576 23.3884 12.375 23.3482C14.8862 24.9955 18.221 26 21.8571 26C23.0826 26 24.2679 25.8795 25.3929 25.6786C27.0603 26.8638 28.9487 27.7277 30.9777 28.25C31.5201 28.3906 32.1027 28.4911 32.7054 28.5714C33.0268 28.6116 33.3281 28.3504 33.4085 27.9888C33.4888 27.6071 33.2277 27.3661 33.0067 27.1049C32.2232 26.221 31.3393 25.4375 30.6563 23.7701C33.9107 21.8817 36 18.9888 36 15.7143Z"
-              fill="#FFFFFF"
-            />
-          </svg>
-        </div>
-        <div
-          id="svg2"
-          class="bg-blue-600 rounded-full w-16 h-16 m-4 hidden items-center justify-center cursor-pointer shadow-xl dont-show"
-        >
-          <svg
-            class="w-6 h-6 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 9l-7 7-7-7"
-            ></path>
-          </svg>
-        </div>
-      </div>
     </div>
-    <script type="module" src="./index.js"></script>
+    <script defer type="text/javascript" src="./app.js"></script>
   </body>
 </html>
